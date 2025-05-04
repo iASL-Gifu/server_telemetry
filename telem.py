@@ -68,11 +68,18 @@ def get_network_speed():
 def get_cpu_temp():
     try:
         temps = psutil.sensors_temperatures()
+        print(temps)
         if 'coretemp' in temps:
             for core in temps['coretemp']:
                 if "Package" in core.label:
                     return core.current
             return temps['coretemp'][0].current
+        elif 'k10temp' in temps:
+            for entry in temps['k10temp']:
+                if entry.label == 'Tctl':
+                    return entry.current
+            # フォールバック：一番目の値を使う
+            return temps['k10temp'][0].current
     except Exception:
         pass
     return None
