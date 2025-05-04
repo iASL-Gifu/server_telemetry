@@ -40,7 +40,9 @@ else:
 # ホスト基本情報
 hostname = socket.gethostname()
 cpu_model = cpuinfo.get_cpu_info()["brand_raw"]
-
+logical_cores = psutil.cpu_count(logical=True)
+physical_cores = psutil.cpu_count(logical=False)
+core_info_str = f"{physical_cores} / {logical_cores}"
 # ネットワーク速度計測用
 last_net = psutil.net_io_counters()
 last_time = time.time()
@@ -110,6 +112,7 @@ def collect_and_send():
         Point("server_telemetry")
         .tag("hostname", hostname)
         .field("cpu_model", cpu_model)
+        .field("cpu_core_info", core_info_str) 
         .field("cpu_usage", round(cpu_usage, 2))
         .field("cpu_temp", round(cpu_temp, 2))
         .field("mem_used_gb", round(mem_used_gb, 2))
