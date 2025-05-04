@@ -140,6 +140,7 @@ def collect_and_send():
                 .field("gpu_temp", round(gpu_temp, 2))
                 .field("gpu_mem_used_gb", round(gpu_mem_used, 2))
                 .field("gpu_mem_util", round(gpu_mem_util, 2))
+                .field("gpu_mem_total", round(gpu_mem_total, 2))
                 .field("gpu_power_watt", round(power_watt, 2))
             )
             print(gpu_point.to_line_protocol())  # 書き込むデータを確認
