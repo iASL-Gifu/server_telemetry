@@ -125,10 +125,11 @@ def collect_and_send():
             gpu_name = nvmlDeviceGetName(handle)
             gpu_util = nvmlDeviceGetUtilizationRates(handle).gpu
             gpu_temp = nvmlDeviceGetTemperature(handle, NVML_TEMPERATURE_GPU)
-            gpu_mem_used = nvmlDeviceGetMemoryInfo(handle).used / (1024 ** 3)  # GB単位
+            gpu_mem = nvmlDeviceGetMemoryInfo(handle)
+            gpu_mem_used = gpu_mem.used / (1024 ** 3)  # GB単位
+            gpu_mem_total = gpu_mem.total / (1024 ** 3)
+            gpu_mem_util = (gpu_mem.used / gpu_mem.total) * 100  # 利用率[%]
             power_watt = nvmlDeviceGetPowerUsage(handle) / 1000
-
-
 
             gpu_point = (
                 Point("server_telemetry")
@@ -138,6 +139,7 @@ def collect_and_send():
                 .field("gpu_usage", round(gpu_util, 2))
                 .field("gpu_temp", round(gpu_temp, 2))
                 .field("gpu_mem_used_gb", round(gpu_mem_used, 2))
+                .field("gpu_mem_util", round(gpu_mem_util, 2))
                 .field("gpu_power_watt", round(power_watt, 2))
             )
             print(gpu_point.to_line_protocol())  # 書き込むデータを確認
