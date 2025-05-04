@@ -105,7 +105,9 @@ def collect_and_send():
     cpu_usage = psutil.cpu_percent(interval=1)
     cpu_temp = get_cpu_temp()
     mem = psutil.virtual_memory()
+    mem_total_gb = mem.total / (1024 ** 3)
     mem_used_gb = mem.used / (1024 ** 3)
+    mem_used_percent = mem.percent
     rx_kbps, tx_kbps = get_network_speed()
 
     cpu_point = (
@@ -115,6 +117,8 @@ def collect_and_send():
         .field("cpu_core_info", core_info_str) 
         .field("cpu_usage", round(cpu_usage, 2))
         .field("cpu_temp", round(cpu_temp, 2))
+        .field("mem_total_gb", round(mem_total_gb, 2))
+        .field("mem_used_percent", round(mem_used_percent, 2))
         .field("mem_used_gb", round(mem_used_gb, 2))
         .field("rx_kbps", round(rx_kbps, 2))
         .field("tx_kbps", round(tx_kbps, 2))
