@@ -40,7 +40,7 @@ deactivate
 
 # サービスファイルのテンプレート
 echo "Creating service file..."
-cat > telem.service << EOF
+cat > server_telemetry.service << EOF
 [Unit]
 Description=Server Telemetry Service
 After=network.target
@@ -59,7 +59,7 @@ EOF
 
 # サービスファイルをシステムの場所にコピー
 echo "Installing service file..."
-sudo cp telem.service /etc/systemd/system/
+sudo cp server_telemetry.service /etc/systemd/system/
 
 # systemd に新しいサービスファイルを読み込ませる
 echo "Reloading systemd daemon..."
@@ -74,3 +74,63 @@ echo "Telemetry service setup complete!"
 echo "Service running as: $CURRENT_USER"
 echo "Using Python environment: $VENV_PATH"
 echo "Working directory: $INSTALL_DIR"
+
+
+# Crontabの設定
+echo "Setting up crontab for daily updates..."
+
+# 一時ファイルにcrontabの内容を出力
+crontab -l > /tmp/mycron 2>/dev/null || true
+
+# 既に設定が存在するか確認
+if ! grep -q "daily_update.sh" /tmp/mycron; then
+    # 設定を追加
+    echo "# Everyday telemetry update" >> /tmp/mycron
+    echo "0 4 * * * /opt/server_telemetry/daily_update.sh" >> /tmp/mycron
+    
+    # 新しいcrontabを設定
+    crontab /tmp/mycron
+    echo "Crontab entry added successfully."
+else
+    echo "Crontab entry already exists."
+fi
+
+# 一時ファイルを削除
+rm /tmp/mycron
+
+# 確認
+echo "Current crontab:"
+crontab -l
+
+
+# Sudoers設定を追加（パスワードなしでのsudo実行を許可）
+echo "Setting up sudoers configuration..."
+
+# sudoersファイルが既に存在するか確認
+if [ ! -f "/etc/sudoers.d/server_telemetry" ]; then
+    # sudoersファイルを作成
+    sudo tee /etc/sudoers.d/server_telemetry > /dev/null << 'EOF'
+# Allow nuc to manage server_telemetry service without password
+nuc ALL=(ALL) NOPASSWD: /usr/bin/systemctl start server_telemetry.service
+nuc ALL=(ALL) NOPASSWD: /usr/bin/systemctl stop server_telemetry.service
+nuc ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart server_telemetry.service
+nuc ALL=(ALL) NOPASSWD: /usr/bin/systemctl status server_telemetry.service
+
+# Allow nuc to write to the log file
+nuc ALL=(ALL) NOPASSWD: /usr/bin/tee -a /var/log/server_telemetry_update.log
+EOF
+
+    # 適切な権限を設定
+    sudo chmod 440 /etc/sudoers.d/server_telemetry
+    echo "Sudoers configuration added successfully."
+else
+    echo "Sudoers configuration already exists."
+fi
+
+# sudoersファイルの構文チェック
+if sudo visudo -c -f /etc/sudoers.d/server_telemetry; then
+    echo "Sudoers configuration is valid."
+else
+    echo "ERROR: Sudoers configuration has syntax errors!"
+    exit 1
+fi
