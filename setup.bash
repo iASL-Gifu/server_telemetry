@@ -5,7 +5,7 @@ CURRENT_USER=$(whoami)
 CURRENT_GROUP=$(id -gn)
 
 # 作業ディレクトリと仮想環境パスを設定
-INSTALL_DIR="/opt/iASL_telemetry"
+INSTALL_DIR="/opt/server_telemetry"
 VENV_PATH="$INSTALL_DIR/telem_venv"
 
 echo "Setting up telemetry service for user: $CURRENT_USER"
