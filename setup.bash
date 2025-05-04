@@ -67,8 +67,8 @@ sudo systemctl daemon-reload
 
 # サービスを有効化して起動
 echo "Enabling and starting telemetry service..."
-sudo systemctl enable telem.service
-sudo systemctl start telem.service
+sudo systemctl enable server_telemetry.service
+sudo systemctl start server_telemetry.service
 
 echo "Telemetry service setup complete!"
 echo "Service running as: $CURRENT_USER"
