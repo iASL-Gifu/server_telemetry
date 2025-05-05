@@ -30,7 +30,7 @@ echo "Installing required Python packages..."
 source "$VENV_PATH/bin/activate"
 pip install --upgrade pip
 # テレメトリーに必要なパッケージをインストール
-pip install psutil influxdb_client
+pip install psutil influxdb_client py-cpuinfo
 # GPUがあれば関連パッケージもインストール
 if command -v nvidia-smi >/dev/null 2>&1; then
     echo "NVIDIA GPU detected, installing pynvml..."
