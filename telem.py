@@ -167,5 +167,5 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     while True:
         collect_and_send()
-        time.sleep(1)  # 10秒ごとに送信
+        time.sleep(60)  # 60秒ごとに送信
 
