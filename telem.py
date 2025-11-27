@@ -1,5 +1,5 @@
 # InfluxDB接続情報
-INFLUXDB_URL = "http://10.224.131.253:8086"
+INFLUXDB_URL = "http://192.168.11.3:8086"
 INFLUXDB_TOKEN = "kUM-45ZbLCp4EtXiJ3bv7LfagMqhBDlWguKL70Zv4wJil1orh-JFktCDoPjrhcXsGqNEJamnnolZqW6Vgfpe6w=="
 INFLUXDB_ORG = "my-orgs"
 INFLUXDB_BUCKET = "server-telemetry"
